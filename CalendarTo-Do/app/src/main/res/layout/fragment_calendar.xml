@@ -1,13 +1,54 @@
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gridview"
-    android:background="@color/colorPrimary"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="layout.CalendarFragment"
-    android:numColumns="7"
-    android:verticalSpacing="1dp"
-    android:horizontalSpacing="1dp"
-    android:gravity="center">
+    android:layout_height="match_parent">
 
-</GridView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="5dp"
+        android:background="@color/calendarTitleBackground">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/leftArrow"
+            android:textSize="20sp"
+            android:background="@color/calendarTitleBackground"/>
+
+        <TextView
+            android:id="@+id/monthTitle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="30sp"
+            android:text="February"
+            android:gravity="center"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rightArrow"
+            android:textSize="20sp"
+            android:background="@color/calendarTitleBackground"/>
+
+    </LinearLayout>
+
+
+    <GridView
+        android:id="@+id/gridview"
+        android:background="@color/calendarTitleBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="layout.CalendarFragment"
+        android:numColumns="7"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center">
+
+    </GridView>
+
+</LinearLayout>

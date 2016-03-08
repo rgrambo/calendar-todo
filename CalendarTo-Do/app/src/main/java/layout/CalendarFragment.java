@@ -5,19 +5,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import edu.uw.rgrambo.calendarto_do.CalendarDayAdapter;
+import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
 
 /**
@@ -59,6 +65,10 @@ public class CalendarFragment extends Fragment {
 
         gridView = (GridView) view.findViewById(R.id.gridview);
 
+        // Set to the current month
+        ((TextView)view.findViewById(R.id.monthTitle)).setText(
+                new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()));
+
         populateGrid();
 
         return view;
@@ -84,7 +94,12 @@ public class CalendarFragment extends Fragment {
             dateTime = dateTime.plusDays(1);
         }
 
-        CalendarDayAdapter calendarDayAdapter = new CalendarDayAdapter(getContext(), dates);
+        List<Event> events = new ArrayList<Event>();
+        events.add (new Event(DateTime.now(), "Title"));
+        //events.add (new Event(DateTime.now(), "Another Title"));
+
+        CalendarDayAdapter calendarDayAdapter = new CalendarDayAdapter(gridView,
+                getContext(), dates, events);
 
         gridView.setAdapter(calendarDayAdapter);
     }
