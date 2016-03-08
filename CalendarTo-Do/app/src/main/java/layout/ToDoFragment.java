@@ -1,85 +1,75 @@
 package layout;
 
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
+import java.util.Date;
+
+import edu.uw.rgrambo.calendarto_do.AddTodoFragment;
 import edu.uw.rgrambo.calendarto_do.R;
+import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ToDoFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ToDoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ToDoFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private SimpleCursorAdapter adapter;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    private onToDoFragmentInteractionListener mListener;
 
     public ToDoFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ToDoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ToDoFragment newInstance(String param1, String param2) {
-        ToDoFragment fragment = new ToDoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_to_do, container, false);
-    }
+        final View rootView = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE};
+        final int[] ids = new int[]{R.id.todoItem};
+
+        adapter = new SimpleCursorAdapter(
+                getActivity(), R.layout.todo,
+                TodoDatabase.queryDatabase(getActivity()),
+                cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
+
+        final AdapterView todoView = (AdapterView)rootView.findViewById(R.id.todoList);
+        todoView.setAdapter(adapter);
+
+
+        Button addTodo = (Button)rootView.findViewById(R.id.addTodo);
+        addTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.support.v4.app.DialogFragment addTodo = new AddTodoFragment();
+                addTodo.show(getFragmentManager(), "ADD_TODO_FRAGMENT");
+            }
+        });
+
+
+        return rootView;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof onToDoFragmentInteractionListener) {
+            mListener = (onToDoFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -92,17 +82,7 @@ public class ToDoFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
+    public interface onToDoFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
