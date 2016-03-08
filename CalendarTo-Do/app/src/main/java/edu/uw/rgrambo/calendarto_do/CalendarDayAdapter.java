@@ -1,6 +1,12 @@
 package edu.uw.rgrambo.calendarto_do;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +25,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import layout.AddEventDialogFragment;
 import layout.EventButton;
 
 /**
@@ -78,15 +85,6 @@ public class CalendarDayAdapter extends BaseAdapter {
                     .setBackgroundColor(context.getResources().getColor(R.color.calendarDayOtherBackground));
         }
 
-        // Add tap event
-        convertView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                return true;
-            }
-        });
-
         return convertView;
     }
 
@@ -98,9 +96,9 @@ public class CalendarDayAdapter extends BaseAdapter {
         List<Event> results = new ArrayList();
 
         for (Event event : events) {
-            if (event.getDate().getYear() == testDate.getYear() &&
-                event.getDate().getMonthOfYear() == testDate.getMonthOfYear() &&
-                event.getDate().getDayOfMonth() == testDate.getDayOfMonth()) {
+            if (event.getStartTime().getYear() == testDate.getYear() &&
+                event.getStartTime().getMonthOfYear() == testDate.getMonthOfYear() &&
+                event.getStartTime().getDayOfMonth() == testDate.getDayOfMonth()) {
                 results.add(event);
             }
         }

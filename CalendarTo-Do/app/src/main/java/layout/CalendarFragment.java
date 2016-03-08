@@ -1,15 +1,21 @@
 package layout;
 
+import android.app.Activity;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -69,6 +75,24 @@ public class CalendarFragment extends Fragment {
         ((TextView)view.findViewById(R.id.monthTitle)).setText(
                 new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()));
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Create the AlertDialog
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment prev = fm.findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                // Create and show the dialog.
+                DialogFragment newFragment = new AddEventDialogFragment();
+                newFragment.show(ft, "dialog");
+            }
+        });
+
         populateGrid();
 
         return view;
@@ -95,11 +119,13 @@ public class CalendarFragment extends Fragment {
         }
 
         List<Event> events = new ArrayList<Event>();
-        events.add (new Event(DateTime.now(), "Title"));
-        //events.add (new Event(DateTime.now(), "Another Title"));
+
+        // HERE HOLDEN
+        events.add (new Event("Title", "This is an event", "Ross", DateTime.now(), DateTime.now(), 0));
+        events.add (new Event("Title 2", "This is an event 2", "Ross 2", DateTime.now().plusDays(1), DateTime.now().plusDays(1), 0));
 
         CalendarDayAdapter calendarDayAdapter = new CalendarDayAdapter(gridView,
-                getContext(), dates, events);
+                getActivity(), dates, events);
 
         gridView.setAdapter(calendarDayAdapter);
     }

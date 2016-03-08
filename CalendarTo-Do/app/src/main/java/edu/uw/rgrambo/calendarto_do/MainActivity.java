@@ -1,12 +1,18 @@
 package edu.uw.rgrambo.calendarto_do;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Date;
 
+import layout.AddEventDialogFragment;
 import layout.CalendarFragment;
 import layout.ToDoFragment;
 

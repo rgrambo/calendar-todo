@@ -2,29 +2,57 @@ package layout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 
+import org.joda.time.DateTime;
+
+import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
 
-public class AddEventDialogFragment extends DialogFragment {
+public class AddEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
+    public DateTime Date;
+
+    int repeat = 0;
+    View view;
+
+    public AddEventDialogFragment() {}
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.fragment_add_event_dialog, null);
+        view = inflater.inflate(R.layout.fragment_add_event_dialog, null);
 
         builder.setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Handle Create
+                        DateTime date = DateTime.now();
+                        String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
+                        String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
+                        String owner = ((EditText)view.findViewById(R.id.eventOwner)).getText().toString();
+
+                        TimePicker startTimePicker = (TimePicker)view.findViewById(R.id.eventStartTime);
+                        DateTime start = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
+                                startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
+
+                        TimePicker endTimePicker = (TimePicker)view.findViewById(R.id.eventEndTime);
+                        DateTime end = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
+                                startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
+
+                        Event newEvent = new Event(title, note, owner, start, end, repeat);
+
+                        // ADD EVENT
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -42,6 +70,15 @@ public class AddEventDialogFragment extends DialogFragment {
 
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        repeat = pos;
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 }
 
