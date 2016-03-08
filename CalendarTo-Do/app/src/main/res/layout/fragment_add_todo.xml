@@ -27,4 +27,20 @@
         android:layout_below="@id/todoFor"
         android:text="Add Todo!"/>
 
+    <Button
+        android:id="@+id/updateTodo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/todoFor"
+        android:text="Update Todo!"/>
+
+    <Button
+        android:id="@+id/deleteTodo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/updateTodo"
+        android:layout_below="@id/todoFor"
+        android:layout_marginLeft="10dp"
+        android:text="Delete this todo"/>
+
 </RelativeLayout>

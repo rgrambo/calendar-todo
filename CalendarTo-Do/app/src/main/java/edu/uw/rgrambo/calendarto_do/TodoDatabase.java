@@ -117,6 +117,30 @@ public class TodoDatabase {
         } catch (SQLiteConstraintException e){}
     }
 
+    public static void updateTodo(Context context, TodoItem todo, int id) {
+        Helper helper = Helper.getHelper(context);
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues content = new ContentValues();
+        content.put(TodoDB.COL_TITLE, todo.title);
+        content.put(TodoDB.COL_TODOFOR, todo.todoFor);
+
+        try {
+            int rowsAffected = db.update(TodoDB.TABLE_NAME, content, TodoDB._ID + "=" + id, null);
+        } catch (SQLiteConstraintException e){}
+    }
+
+    public static void deleteTodo(Context context, int id) {
+        Helper helper = Helper.getHelper(context);
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        try {
+            int rowsAffected = db.delete(TodoDB.TABLE_NAME, TodoDB._ID + "=" + id, null);
+        } catch (SQLiteConstraintException e){}
+    }
+
     public static Cursor queryDatabase(Context context) {
 
         Helper helper = Helper.getHelper(context);

@@ -3,6 +3,7 @@ package layout;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,8 +40,8 @@ public class ToDoFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_to_do, container, false);
 
-        final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE};
-        final int[] ids = new int[]{R.id.todoItem};
+        final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+        final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
 
         adapter = new SimpleCursorAdapter(
                 getActivity(), R.layout.todo,
@@ -60,6 +61,23 @@ public class ToDoFragment extends Fragment {
                 addTodo.show(getFragmentManager(), "ADD_TODO_FRAGMENT");
             }
         });
+
+        todoView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SQLiteCursor cursor = (SQLiteCursor) parent.getItemAtPosition(position);
+                android.support.v4.app.DialogFragment addTodo = new AddTodoFragment();
+                // Add dater
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", cursor.getInt(cursor.getColumnIndex(TodoDatabase.TodoDB._ID)));
+                bundle.putString("title", cursor.getString(cursor.getColumnIndex(TodoDatabase.TodoDB.COL_TITLE)));
+                bundle.putString("for", cursor.getString(cursor.getColumnIndex(TodoDatabase.TodoDB.COL_TODOFOR)));
+                addTodo.setArguments(bundle);
+                addTodo.show(getFragmentManager(), "ADD_TODO_FRAGMENT");
+                Log.v("TAGGING", cursor.getString(cursor.getColumnIndex(TodoDatabase.TodoDB.COL_TITLE)));
+            }
+        });
+
 
 
         return rootView;

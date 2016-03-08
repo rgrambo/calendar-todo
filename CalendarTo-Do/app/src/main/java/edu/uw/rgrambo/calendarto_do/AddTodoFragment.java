@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,6 +50,21 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
         final TextView todoTitle = (TextView) rootView.findViewById(R.id.todoTitle);
         final TextView todoFor = (TextView) rootView.findViewById(R.id.todoFor);
         final Button recordTodo = (Button) rootView.findViewById(R.id.recordTodo);
+        final Button updateTodo = (Button) rootView.findViewById(R.id.updateTodo);
+        final Button deleteTodo = (Button) rootView.findViewById(R.id.deleteTodo);
+
+        final Bundle extras = getArguments();
+
+        if (extras == null) {
+            updateTodo.setVisibility(View.INVISIBLE);
+            deleteTodo.setVisibility(View.INVISIBLE);
+
+        } else {
+            recordTodo.setVisibility(View.INVISIBLE);
+            // Extras not null so we popular our text fields
+            todoTitle.setText(extras.getString("title"));
+            todoFor.setText(extras.getString("for"));
+        }
 
         recordTodo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,8 +75,8 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
                 TodoDatabase.insertTodo(getActivity(), todoItem);
                 addFragmentDialog.dismiss();
 
-                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE};
-                final int[] ids = new int[]{R.id.todoItem};
+                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
 
                 todoView.setAdapter(new SimpleCursorAdapter(
                         getActivity(), R.layout.todo,
@@ -69,6 +85,48 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
                 ));
 
                 Toast.makeText(getActivity(), "Added a new Todo!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        updateTodo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String title = todoTitle.getText().toString();
+                String tFor = todoFor.getText().toString();
+                TodoItem todoItem = new TodoItem(title, tFor);
+                TodoDatabase.updateTodo(getActivity(), todoItem, extras.getInt("id"));
+                addFragmentDialog.dismiss();
+
+                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
+
+                todoView.setAdapter(new SimpleCursorAdapter(
+                        getActivity(), R.layout.todo,
+                        TodoDatabase.queryDatabase(getActivity()),
+                        cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+                ));
+
+                Toast.makeText(getActivity(), "Updated your todo!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        deleteTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TodoDatabase.deleteTodo(getActivity(), extras.getInt("id"));
+                addFragmentDialog.dismiss();
+
+                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
+
+                todoView.setAdapter(new SimpleCursorAdapter(
+                        getActivity(), R.layout.todo,
+                        TodoDatabase.queryDatabase(getActivity()),
+                        cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+                ));
+
+                Toast.makeText(getActivity(), "Deleted your todo!", Toast.LENGTH_LONG).show();
             }
         });
         // Create the AlertDialog object and return it
