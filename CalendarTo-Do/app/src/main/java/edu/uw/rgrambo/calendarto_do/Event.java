@@ -11,6 +11,7 @@ public class Event {
     private String Title;
     private String Note;
     private String Owner;
+    private int Repeat;
 
     public Event(String title, String note, String owner, DateTime start, DateTime end, int repeat) {
         StartTime = start;
@@ -18,6 +19,7 @@ public class Event {
         Title = title;
         Note = note;
         Owner = owner;
+        Repeat = repeat;
     }
 
     public DateTime getStartTime() {
@@ -36,4 +38,5 @@ public class Event {
     public String getOwner() {
         return Owner;
     }
+    public int getRepeat() { return Repeat; }
 }

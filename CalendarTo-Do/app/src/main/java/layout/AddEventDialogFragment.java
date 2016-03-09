@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import org.joda.time.DateTime;
 
 import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
+import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
 public class AddEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
     public DateTime Date;
@@ -51,8 +53,7 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
                                 startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
 
                         Event newEvent = new Event(title, note, owner, start, end, repeat);
-
-                        // ADD EVENT
+                        TodoDatabase.insertCalender(getContext(), newEvent);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

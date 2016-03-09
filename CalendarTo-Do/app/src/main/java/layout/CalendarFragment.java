@@ -1,6 +1,7 @@
 package layout;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import java.util.List;
 import edu.uw.rgrambo.calendarto_do.CalendarDayAdapter;
 import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
+import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -121,8 +123,25 @@ public class CalendarFragment extends Fragment {
         List<Event> events = new ArrayList<Event>();
 
         // HERE HOLDEN
-        events.add (new Event("Title", "This is an event", "Ross", DateTime.now(), DateTime.now(), 0));
-        events.add (new Event("Title 2", "This is an event 2", "Ross 2", DateTime.now().plusDays(1), DateTime.now().plusDays(1), 0));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+        Cursor cursor = TodoDatabase.queryDatabaseForCalendar(getContext());
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            try {
+                events.add(new Event(
+                        cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_NOTE)),
+                        cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_OWNER)),
+                        new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_START_TIME)))),
+                        new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME)))),
+                        cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_REPEAT))
+                ));
+            } catch (Exception e) {
+                Log.wtf("Why", e.toString());
+            }
+            cursor.moveToNext();
+        }
 
         CalendarDayAdapter calendarDayAdapter = new CalendarDayAdapter(gridView,
                 getActivity(), dates, events);

@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
+
+import java.util.Calendar;
 
 /**
  * Created by holdenstegman on 3/8/16.
@@ -18,8 +21,18 @@ public class TodoDatabase {
 
     public static abstract class TodoDB implements BaseColumns {
         public static final String TABLE_NAME = "todos";
-        public static final String COL_TITLE = "quantity";
+        public static final String COL_TITLE = "todotitle";
         public static final String COL_TODOFOR = "todofor";
+    }
+
+    public static abstract class CalendarDB implements BaseColumns {
+        public static final String TABLE_NAME = "calendar";
+        public static final String COL_TITLE = "title";
+        public static final String COL_NOTE = "note";
+        public static final String COL_OWNER = "owner";
+        public static final String COL_START_TIME = "start_time";
+        public static final String COL_END_TIME = "end_time";
+        public static final String COL_REPEAT = "repeat";
     }
 
     public static final String CREATE_TODOS =
@@ -29,8 +42,19 @@ public class TodoDatabase {
                     TodoDB.COL_TODOFOR + " TEXT" +
                     ")";
 
-    public static final String DROP_TODOS = "DROP TABLE IF EXISTS "+ TodoDB.TABLE_NAME;
+    public static final String CREATE_CALENDAR =
+            "CREATE TABLE IF NOT EXISTS " + CalendarDB.TABLE_NAME + "(" +
+                    CalendarDB._ID + " INTEGER PRIMARY KEY" + ", "+
+                    CalendarDB.COL_TITLE + " TEXT" +"," +
+                    CalendarDB.COL_NOTE + " TEXT" + ", " +
+                    CalendarDB.COL_OWNER + " TEXT" + ", " +
+                    CalendarDB.COL_START_TIME + " DATETIME" + ", " +
+                    CalendarDB.COL_END_TIME + " DATETIME" +", " +
+                    CalendarDB.COL_REPEAT + " INTEGER" +
+                    ")";
 
+    public static final String DROP_TODOS = "DROP TABLE IF EXISTS "+ TodoDB.TABLE_NAME;
+    public static final String DROP_CALENDAR = "DROP TABLE IF EXISTS " + CalendarDB.TABLE_NAME;
 
     public static class Helper extends SQLiteOpenHelper {
 
@@ -54,11 +78,13 @@ public class TodoDatabase {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(CREATE_TODOS);
+            db.execSQL(CREATE_CALENDAR);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL(DROP_TODOS);
+            db.execSQL(DROP_CALENDAR);
             onCreate(db);
         }
     }
@@ -68,6 +94,7 @@ public class TodoDatabase {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         db.execSQL(CREATE_TODOS);
+        db.execSQL(CREATE_CALENDAR);
     }
 
     //Helper method to reset my data
@@ -76,31 +103,10 @@ public class TodoDatabase {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         db.execSQL(DROP_TODOS);
+        db.execSQL(DROP_CALENDAR);
         db.execSQL(CREATE_TODOS);
+        db.execSQL(CREATE_CALENDAR);
     }
-
-//    public static int getSums(Context context) {
-//        Helper helper = Helper.getHelper(context);
-//
-//        SQLiteDatabase db = helper.getWritableDatabase();
-//
-//        String[] cols = new String[] {
-//                ObservationDB._ID,
-//                ObservationDB.COL_QUANTITY,
-//                ObservationDB.COL_DESC,
-//                ObservationDB.COL_DATE
-//        };
-//
-//        Cursor results = db.query(ObservationDB.TABLE_NAME, cols, null, null, null, null, null, null);
-//
-//        int count = 0;
-//        results.moveToFirst();
-//        for (int i = 0; i < results.getCount(); i++) {
-//            count += results.getInt(results.getColumnIndex(ObservationDB.COL_QUANTITY));
-//            results.moveToNext();
-//        }
-//        return count;
-//    }
 
 
     public static void insertTodo(Context context, TodoItem todo) {
@@ -155,6 +161,45 @@ public class TodoDatabase {
         Cursor results = db.query(TodoDB.TABLE_NAME, cols, null, null, null, null, null, null);
 
         return results;
+    }
+
+    public static Cursor queryDatabaseForCalendar(Context context) {
+        Helper helper = Helper.getHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String[] cols = new String[] {
+                CalendarDB._ID,
+                CalendarDB.COL_TITLE,
+                CalendarDB.COL_NOTE,
+                CalendarDB.COL_OWNER,
+                CalendarDB.COL_START_TIME,
+                CalendarDB.COL_END_TIME,
+                CalendarDB.COL_REPEAT
+        };
+
+        Cursor results = db.query(CalendarDB.TABLE_NAME, cols, null, null, null, null, null, null);
+
+        return results;
+    }
+
+    public static void insertCalender(Context context, Event event) {
+        Helper helper = Helper.getHelper(context);
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues content = new ContentValues();
+        content.put(CalendarDB.COL_TITLE, event.getTitle());
+        content.put(CalendarDB.COL_NOTE, event.getNote());
+        content.put(CalendarDB.COL_OWNER, event.getOwner());
+        content.put(CalendarDB.COL_START_TIME, event.getStartTime().toString());
+        content.put(CalendarDB.COL_END_TIME, event.getEndTime().toString());
+        content.put(CalendarDB.COL_REPEAT, event.getRepeat());
+
+        try {
+            long newRowId = db.insert(CalendarDB.TABLE_NAME, null, content);
+        } catch (Exception e){
+            Log.wtf("WTF", e.toString());
+        }
     }
 
 
