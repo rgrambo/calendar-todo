@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.joda.time.DateTime;
@@ -47,6 +48,7 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
 
         Bundle bundle = this.getArguments();
         final int eventId = bundle.getInt("id");
+        final int offset = bundle.getInt("offset");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -103,7 +105,7 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
                         TodoDatabase.updateCalendar(getContext(), newEvent, eventId);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
-                        CalendarFragment.populateGrid(gridView, getContext(), getActivity());
+                        CalendarFragment.populateGrid(gridView, (TextView) getActivity().findViewById((R.id.monthTitle)), getContext(), getActivity(), offset);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -116,7 +118,7 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
                         TodoDatabase.deleteCalendar(getContext(), eventId);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
-                        CalendarFragment.populateGrid(gridView, getContext(), getActivity());
+                        CalendarFragment.populateGrid(gridView, (TextView) getActivity().findViewById((R.id.monthTitle)), getContext(), getActivity(), offset);
                     }
                 });
 

@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.joda.time.DateTime;
@@ -40,6 +41,7 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
 
         Bundle bundle = this.getArguments();
         date = DateTime.parse(bundle.getString("date"));
+        final int offset = bundle.getInt("offset");
 
         builder.setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
@@ -61,7 +63,7 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
                         Log.wtf("WTF", gridView + "");
-                        CalendarFragment.populateGrid(gridView, getContext(), getActivity());
+                        CalendarFragment.populateGrid(gridView, (TextView) getActivity().findViewById((R.id.monthTitle)), getContext(), getActivity(), offset);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

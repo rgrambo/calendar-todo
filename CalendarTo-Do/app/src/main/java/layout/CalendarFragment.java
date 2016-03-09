@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -47,6 +48,9 @@ public class CalendarFragment extends Fragment {
 
     private GridView gridView;
     private static DateTime[] dates;
+    private TextView monthTitle;
+
+    private int monthOffset = 1;
 
     // Required Empty Constructor
     public CalendarFragment() {}
@@ -73,13 +77,29 @@ public class CalendarFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         gridView = (GridView) view.findViewById(R.id.gridview);
+        monthTitle = (TextView) view.findViewById(R.id.monthTitle);
+        Button leftButton = (Button) view.findViewById(R.id.calendarLeft);
+        Button rightButton = (Button) view.findViewById(R.id.calendarRight);
 
-        // Set to the current month
-        ((TextView)view.findViewById(R.id.monthTitle)).setText(
-                new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()));
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                monthOffset++;
+                populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset);
+            }
+        });
+
+        rightButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                monthOffset--;
+                populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset);
+            }
+        });
 
 
-        populateGrid(gridView, getContext(), getActivity());
+        populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -100,6 +120,7 @@ public class CalendarFragment extends Fragment {
 
                 Bundle args = new Bundle();
                 args.putString("date", date.toString());
+                args.putInt("offset", monthOffset);
                 newFragment.setArguments(args);
 
                 newFragment.show(ft, "dialog");
@@ -109,19 +130,24 @@ public class CalendarFragment extends Fragment {
         return view;
     }
 
-    public static void populateGrid(GridView gridView, Context context, Activity activity) {
-
+    public static void populateGrid(GridView gridView, TextView monthTitle, Context context, Activity activity, int monthOffset) {
         // Create the calendar
         Calendar calendar = Calendar.getInstance();
 
         DateTime dateTime = new DateTime(calendar);
 
         // Set to previous month
-        dateTime = dateTime.minusMonths(1);
+        dateTime = dateTime.minusMonths(monthOffset);
         // Set to last day in that month
         dateTime = dateTime.dayOfMonth().withMaximumValue();
         // Set to sunday of that week
-        dateTime = dateTime.minusDays(dateTime.getDayOfWeek()-1);
+        dateTime = dateTime.minusDays(dateTime.getDayOfWeek() - 1);
+
+        // Set to the current month
+        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "Novermber", "December"};
+//        ((TextView)activity.findViewById(R.id.monthTitle)).setText(
+//                new SimpleDateFormat("MMMM").format(dateTime));
+        monthTitle.setText(months[dateTime.minusMonths(-1).getMonthOfYear() - 1]);
 
         dates = new DateTime[7 * 6];
         for (int i = 0; i < 7 * 6; i++) {

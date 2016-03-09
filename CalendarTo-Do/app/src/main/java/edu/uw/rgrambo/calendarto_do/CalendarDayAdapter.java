@@ -99,6 +99,7 @@ public class CalendarDayAdapter extends BaseAdapter {
 
                     Bundle args = new Bundle();
                     args.putInt("id", id);
+                    args.putInt("offset", dates[18].getMonthOfYear() - new DateTime().getMonthOfYear() + 1);
                     newFragment.setArguments(args);
 
                     newFragment.show(ft, "dialog");

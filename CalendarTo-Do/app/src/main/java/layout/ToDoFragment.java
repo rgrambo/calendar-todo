@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -76,6 +77,28 @@ public class ToDoFragment extends Fragment {
                 addTodo.show(getFragmentManager(), "ADD_TODO_FRAGMENT");
             }
         });
+
+//        final double[] prevs = {0,0};
+//
+//        todoView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        prevs[0] = event.getX();
+//                        prevs[1] = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        if (event.getX() - prevs[0] < -50) {
+//
+//                            Log.wtf("BAHHH", "Delete it!!" + event.getX() + " : " + event.getY());
+//                        }
+//                        break;
+//                }
+//                return false;
+//            }
+//
+//        });
 
 
 
