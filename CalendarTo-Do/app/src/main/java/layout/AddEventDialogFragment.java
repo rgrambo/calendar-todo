@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
@@ -54,6 +55,10 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
 
                         Event newEvent = new Event(title, note, owner, start, end, repeat);
                         TodoDatabase.insertCalender(getContext(), newEvent);
+
+                        GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
+                        Log.wtf("WTF", gridView + "");
+                        CalendarFragment.populateGrid(gridView, getContext(), getActivity());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

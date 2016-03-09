@@ -74,7 +74,6 @@ public class ToDoFragment extends Fragment {
                 bundle.putString("for", cursor.getString(cursor.getColumnIndex(TodoDatabase.TodoDB.COL_TODOFOR)));
                 addTodo.setArguments(bundle);
                 addTodo.show(getFragmentManager(), "ADD_TODO_FRAGMENT");
-                Log.v("TAGGING", cursor.getString(cursor.getColumnIndex(TodoDatabase.TodoDB.COL_TITLE)));
             }
         });
 

@@ -197,9 +197,7 @@ public class TodoDatabase {
 
         try {
             long newRowId = db.insert(CalendarDB.TABLE_NAME, null, content);
-        } catch (Exception e){
-            Log.wtf("WTF", e.toString());
-        }
+        } catch (Exception e){ }
     }
 
 

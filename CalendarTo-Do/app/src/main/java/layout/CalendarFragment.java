@@ -95,12 +95,12 @@ public class CalendarFragment extends Fragment {
             }
         });
 
-        populateGrid();
+        populateGrid(gridView, getContext(), getActivity());
 
         return view;
     }
 
-    private void populateGrid() {
+    public static void populateGrid(GridView gridView, Context context, Activity activity) {
 
         // Create the calendar
         Calendar calendar = Calendar.getInstance();
@@ -125,7 +125,7 @@ public class CalendarFragment extends Fragment {
         // HERE HOLDEN
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-        Cursor cursor = TodoDatabase.queryDatabaseForCalendar(getContext());
+        Cursor cursor = TodoDatabase.queryDatabaseForCalendar(context);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             try {
@@ -137,14 +137,12 @@ public class CalendarFragment extends Fragment {
                         new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME)))),
                         cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_REPEAT))
                 ));
-            } catch (Exception e) {
-                Log.wtf("Why", e.toString());
-            }
+            } catch (Exception e) { }
             cursor.moveToNext();
         }
 
         CalendarDayAdapter calendarDayAdapter = new CalendarDayAdapter(gridView,
-                getActivity(), dates, events);
+                activity, dates, events);
 
         gridView.setAdapter(calendarDayAdapter);
     }
