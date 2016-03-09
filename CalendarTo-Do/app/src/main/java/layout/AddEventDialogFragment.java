@@ -22,10 +22,11 @@ import edu.uw.rgrambo.calendarto_do.R;
 import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
 public class AddEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
-    public DateTime Date;
 
     int repeat = 0;
     View view;
+
+    private DateTime date = DateTime.now();
 
     public AddEventDialogFragment() {}
 
@@ -37,10 +38,12 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.fragment_add_event_dialog, null);
 
+        Bundle bundle = this.getArguments();
+        date = DateTime.parse(bundle.getString("date"));
+
         builder.setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        DateTime date = DateTime.now();
                         String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
                         String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
                         String owner = ((EditText)view.findViewById(R.id.eventOwner)).getText().toString();

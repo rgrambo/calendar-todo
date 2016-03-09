@@ -46,6 +46,7 @@ public class CalendarFragment extends Fragment {
     private OnCalendarDayInteractionListener mListener;
 
     private GridView gridView;
+    private static DateTime[] dates;
 
     // Required Empty Constructor
     public CalendarFragment() {}
@@ -77,9 +78,14 @@ public class CalendarFragment extends Fragment {
         ((TextView)view.findViewById(R.id.monthTitle)).setText(
                 new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()));
 
+
+        populateGrid(gridView, getContext(), getActivity());
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DateTime date = dates[position];
+
                 // Create the AlertDialog
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -91,11 +97,14 @@ public class CalendarFragment extends Fragment {
 
                 // Create and show the dialog.
                 DialogFragment newFragment = new AddEventDialogFragment();
+
+                Bundle args = new Bundle();
+                args.putString("date", date.toString());
+                newFragment.setArguments(args);
+
                 newFragment.show(ft, "dialog");
             }
         });
-
-        populateGrid(gridView, getContext(), getActivity());
 
         return view;
     }
@@ -114,7 +123,7 @@ public class CalendarFragment extends Fragment {
         // Set to sunday of that week
         dateTime = dateTime.minusDays(dateTime.getDayOfWeek()-1);
 
-        DateTime[] dates = new DateTime[7 * 6];
+        dates = new DateTime[7 * 6];
         for (int i = 0; i < 7 * 6; i++) {
             dates[i] = dateTime;
             dateTime = dateTime.plusDays(1);
