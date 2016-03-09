@@ -131,7 +131,6 @@ public class CalendarFragment extends Fragment {
 
         List<Event> events = new ArrayList<Event>();
 
-        // HERE HOLDEN
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         Cursor cursor = TodoDatabase.queryDatabaseForCalendar(context);
@@ -139,6 +138,7 @@ public class CalendarFragment extends Fragment {
         while (!cursor.isAfterLast()) {
             try {
                 events.add(new Event(
+                        cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB._ID)),
                         cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_TITLE)),
                         cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_NOTE)),
                         cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_OWNER)),

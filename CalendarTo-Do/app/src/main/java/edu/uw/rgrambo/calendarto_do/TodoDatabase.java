@@ -200,5 +200,51 @@ public class TodoDatabase {
         } catch (Exception e){ }
     }
 
+    public static void deleteCalendar(Context context, int id) {
+        Helper helper = Helper.getHelper(context);
 
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        try {
+            int rowsAffected = db.delete(CalendarDB.TABLE_NAME, CalendarDB._ID + "=" + id, null);
+        } catch (SQLiteConstraintException e){}
+    }
+
+    public static Cursor getCalendar(Context context, int id) {
+        Helper helper = Helper.getHelper(context);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String[] cols = new String[] {
+                CalendarDB._ID,
+                CalendarDB.COL_TITLE,
+                CalendarDB.COL_NOTE,
+                CalendarDB.COL_OWNER,
+                CalendarDB.COL_START_TIME,
+                CalendarDB.COL_END_TIME,
+                CalendarDB.COL_REPEAT
+        };
+
+        Cursor results = db.query(CalendarDB.TABLE_NAME, cols, CalendarDB._ID+"=?", new String[]{id+""}, null,
+                null, null, null);
+
+        return results;
+    }
+
+    public static void updateCalendar(Context context, Event event, int id) {
+        Helper helper = Helper.getHelper(context);
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues content = new ContentValues();
+        content.put(CalendarDB.COL_TITLE, event.getTitle());
+        content.put(CalendarDB.COL_NOTE, event.getNote());
+        content.put(CalendarDB.COL_OWNER, event.getOwner());
+        content.put(CalendarDB.COL_START_TIME, event.getStartTime().toString());
+        content.put(CalendarDB.COL_END_TIME, event.getEndTime().toString());
+        content.put(CalendarDB.COL_REPEAT, event.getRepeat());
+
+        try {
+            int rowsAffected = db.update(CalendarDB.TABLE_NAME, content, CalendarDB._ID + "=" + id, null);
+        } catch (SQLiteConstraintException e){}
+    }
 }

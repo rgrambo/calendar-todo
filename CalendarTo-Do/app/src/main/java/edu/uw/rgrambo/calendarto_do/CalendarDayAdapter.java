@@ -8,6 +8,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import layout.AddEventDialogFragment;
+import layout.EditEventDialogFragment;
 import layout.EventButton;
 
 /**
@@ -75,6 +79,31 @@ public class CalendarDayAdapter extends BaseAdapter {
         for (Event event: events) {
             EventButton button = new EventButton(context, event);
 
+            final int id = event.getId();
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // Create the AlertDialog
+                    FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
+                    android.support.v4.app.Fragment prev = fm.findFragmentByTag("dialog");
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+
+                    // Create and show the dialog.
+                    android.support.v4.app.DialogFragment newFragment = new EditEventDialogFragment();
+
+                    Bundle args = new Bundle();
+                    args.putInt("id", id);
+                    newFragment.setArguments(args);
+
+                    newFragment.show(ft, "dialog");
+                }
+            });
             ((LinearLayout)convertView).addView(button);
         }
 
@@ -90,8 +119,6 @@ public class CalendarDayAdapter extends BaseAdapter {
 
     private List<Event> checkDayForEvents(int i) {
         DateTime testDate = dates[i];
-
-        Log.e("TAG", testDate.toString());
 
         List<Event> results = new ArrayList();
 
