@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class CalendarDayAdapter extends BaseAdapter {
     private Context context;
     private final DateTime[] dates;
     private List<Event> events;
+    private DateTime today;
     GridView myGridView;
 
     public CalendarDayAdapter(GridView gridview, Context context, DateTime[] dates, List<Event> events) {
@@ -48,6 +51,8 @@ public class CalendarDayAdapter extends BaseAdapter {
         this.myGridView = gridview;
         this.dates = dates;
         this.events = events;
+
+        today = DateTime.now();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -105,7 +110,7 @@ public class CalendarDayAdapter extends BaseAdapter {
                     newFragment.show(ft, "dialog");
                 }
             });
-            ((LinearLayout)convertView).addView(button);
+            ((LinearLayout)convertView.findViewById(R.id.calendarDay)).addView(button);
         }
 
 
@@ -113,6 +118,15 @@ public class CalendarDayAdapter extends BaseAdapter {
         if (dates[position].getMonthOfYear() != DateTime.now().getMonthOfYear()) {
             ((LinearLayout)convertView.findViewById(R.id.calendarDay))
                     .setBackgroundColor(context.getResources().getColor(R.color.calendarDayOtherBackground));
+        }
+
+        if (dates[position].getYear() == today.getYear() &&
+                dates[position].getMonthOfYear() == today.getMonthOfYear() &&
+                dates[position].getDayOfMonth() == today.getDayOfMonth()) {
+            ((TextView)convertView.findViewById(R.id.calendarDayNumber)).setTypeface(
+                    textView.getTypeface(), Typeface.BOLD_ITALIC);
+            ((LinearLayout)convertView.findViewById(R.id.calendarDay))
+                    .setBackgroundColor(context.getResources().getColor(R.color.calendarDayToday));
         }
 
         return convertView;

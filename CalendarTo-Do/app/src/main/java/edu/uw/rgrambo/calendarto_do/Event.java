@@ -12,20 +12,18 @@ public class Event {
     private String Title;
     private String Note;
     private String Owner;
-    private int Repeat;
 
-    public Event(String title, String note, String owner, DateTime start, DateTime end, int repeat) {
-        this (-1, title, note, owner, start, end, repeat);
+    public Event(String title, String note, String owner, DateTime start, DateTime end) {
+        this (-1, title, note, owner, start, end);
     }
 
-    public Event(int id, String title, String note, String owner, DateTime start, DateTime end, int repeat) {
+    public Event(int id, String title, String note, String owner, DateTime start, DateTime end) {
         Id = id;
         StartTime = start;
         EndTime = end;
         Title = title;
         Note = note;
         Owner = owner;
-        Repeat = repeat;
     }
 
     public DateTime getStartTime() { return StartTime; }
@@ -43,5 +41,4 @@ public class Event {
     public String getOwner() {
         return Owner;
     }
-    public int getRepeat() { return Repeat; }
 }

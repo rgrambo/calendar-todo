@@ -144,7 +144,7 @@ public class CalendarFragment extends Fragment {
         dateTime = dateTime.minusDays(dateTime.getDayOfWeek() - 1);
 
         // Set to the current month
-        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "Novermber", "December"};
+        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 //        ((TextView)activity.findViewById(R.id.monthTitle)).setText(
 //                new SimpleDateFormat("MMMM").format(dateTime));
         monthTitle.setText(months[dateTime.minusMonths(-1).getMonthOfYear() - 1]);
@@ -169,8 +169,7 @@ public class CalendarFragment extends Fragment {
                         cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_NOTE)),
                         cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_OWNER)),
                         new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_START_TIME)))),
-                        new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME)))),
-                        cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_REPEAT))
+                        new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME))))
                 ));
             } catch (Exception e) { }
             cursor.moveToNext();
