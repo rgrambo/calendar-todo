@@ -30,9 +30,8 @@ import edu.uw.rgrambo.calendarto_do.TodoDatabase;
  */
 public class EditEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
-    int repeat = 0;
+    String Owner = "";
     View view;
-    Event event;
 
     private DateTime date = DateTime.now();
 
@@ -50,29 +49,33 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
         final int eventId = bundle.getInt("id");
         final int offset = bundle.getInt("offset");
 
+        // Add the content to the spinner
+        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+                R.array.name_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setAdapter(adapter);
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         Cursor cursor = TodoDatabase.getCalendar (getContext(), eventId);
         cursor.moveToFirst();
 
         // Populate view with current data
-        Event event;
+        Event event = null;
         try {
-
-            Log.e("TAG", "Start");
             event = new Event(
                 cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB._ID)),
                 cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_TITLE)),
                 cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_NOTE)),
                 cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_OWNER)),
                 new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_START_TIME)))),
-                new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME)))),
-                cursor.getInt(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_REPEAT))
+                new DateTime(format.parse(cursor.getString(cursor.getColumnIndex(TodoDatabase.CalendarDB.COL_END_TIME))))
             );
 
             ((EditText)view.findViewById(R.id.eventTitle)).setText(event.getTitle());
             ((EditText)view.findViewById(R.id.eventNote)).setText(event.getNote());
-            ((EditText)view.findViewById(R.id.eventOwner)).setText(event.getOwner());
 
             TimePicker startTimePicker = ((TimePicker)view.findViewById(R.id.eventStartTime));
             startTimePicker.setCurrentHour(event.getStartTime().getHourOfDay());
@@ -81,7 +84,8 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
             endTimePicker.setCurrentHour(event.getEndTime().getHourOfDay());
             endTimePicker.setCurrentMinute(event.getEndTime().getMinuteOfDay());
 
-            Log.e("TAG", "END");
+            Log.e("TAG", event.getOwner() + ": HAHAHA");
+            spinner.setSelection(adapter.getPosition(event.getOwner()));
         } catch (Exception e) {
             Log.e("Error", e.toString());
         }
@@ -91,7 +95,7 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
                     public void onClick(DialogInterface dialog, int id) {
                         String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
                         String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
-                        String owner = ((EditText)view.findViewById(R.id.eventOwner)).getText().toString();
+                        String owner = Owner;
 
                         TimePicker startTimePicker = (TimePicker)view.findViewById(R.id.eventStartTime);
                         DateTime start = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
@@ -101,7 +105,7 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
                         DateTime end = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                                 startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
 
-                        Event newEvent = new Event(title, note, owner, start, end, repeat);
+                        Event newEvent = new Event(title, note, owner, start, end);
                         TodoDatabase.updateCalendar(getContext(), newEvent, eventId);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
@@ -122,20 +126,13 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
                     }
                 });
 
-        // Add the content to the spinner
-        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.repeat_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
         // Create the AlertDialog object and return it
         return builder.create();
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        repeat = pos;
+        Owner = getResources().getStringArray(R.array.name_array)[pos];
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

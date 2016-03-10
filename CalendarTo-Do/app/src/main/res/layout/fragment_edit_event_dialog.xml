@@ -40,21 +40,10 @@
             android:fontFamily="sans-serif"
             android:hint="Description"/>
 
-        <EditText
-            android:id="@+id/eventOwner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif"
-            android:hint="Owner"/>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Repeat Setting"/>
+            android:text="Owner"/>
 
         <Spinner
             android:id="@+id/eventSpinner"

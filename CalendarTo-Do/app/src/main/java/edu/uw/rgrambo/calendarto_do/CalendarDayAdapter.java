@@ -110,7 +110,7 @@ public class CalendarDayAdapter extends BaseAdapter {
                     newFragment.show(ft, "dialog");
                 }
             });
-            ((LinearLayout)convertView).addView(button);
+            ((LinearLayout)convertView.findViewById(R.id.calendarDay)).addView(button);
         }
 
 

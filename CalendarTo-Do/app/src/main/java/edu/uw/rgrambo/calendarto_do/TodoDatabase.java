@@ -193,7 +193,6 @@ public class TodoDatabase {
         content.put(CalendarDB.COL_OWNER, event.getOwner());
         content.put(CalendarDB.COL_START_TIME, event.getStartTime().toString());
         content.put(CalendarDB.COL_END_TIME, event.getEndTime().toString());
-        content.put(CalendarDB.COL_REPEAT, event.getRepeat());
 
         try {
             long newRowId = db.insert(CalendarDB.TABLE_NAME, null, content);
@@ -241,7 +240,6 @@ public class TodoDatabase {
         content.put(CalendarDB.COL_OWNER, event.getOwner());
         content.put(CalendarDB.COL_START_TIME, event.getStartTime().toString());
         content.put(CalendarDB.COL_END_TIME, event.getEndTime().toString());
-        content.put(CalendarDB.COL_REPEAT, event.getRepeat());
 
         try {
             int rowsAffected = db.update(CalendarDB.TABLE_NAME, content, CalendarDB._ID + "=" + id, null);

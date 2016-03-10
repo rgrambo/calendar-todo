@@ -1,13 +1,10 @@
 <resources>
     <string name="app_name">CalendarTo-Do</string>
 
-    <string-array name="repeat_array">
-        <item>None</item>
-        <item>Daily</item>
-        <item>Weekly</item>
-        <item>Every Other Week</item>
-        <item>Monthly</item>
-        <item>Yearly</item>
+    <string-array name="name_array">
+        <item>Ross</item>
+        <item>Holden</item>
+        <item>Kevin</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->

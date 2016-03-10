@@ -2,6 +2,7 @@ package layout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
 public class AddEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
-    int repeat = 0;
+    String Owner = "";
     View view;
 
     private DateTime date = DateTime.now();
@@ -43,12 +44,20 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
         date = DateTime.parse(bundle.getString("date"));
         final int offset = bundle.getInt("offset");
 
+        // Add the content to the spinner
+        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+                R.array.name_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setAdapter(adapter);
+
         builder.setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
                         String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
-                        String owner = ((EditText)view.findViewById(R.id.eventOwner)).getText().toString();
+                        String owner = Owner;
 
                         TimePicker startTimePicker = (TimePicker)view.findViewById(R.id.eventStartTime);
                         DateTime start = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
@@ -58,7 +67,7 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
                         DateTime end = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
                                 startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
 
-                        Event newEvent = new Event(title, note, owner, start, end, repeat);
+                        Event newEvent = new Event(title, note, owner, start, end);
                         TodoDatabase.insertCalender(getContext(), newEvent);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
@@ -72,20 +81,13 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
                     }
                 });
 
-        // Add the content to the spinner
-        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.repeat_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
         // Create the AlertDialog object and return it
         return builder.create();
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        repeat = pos;
+        Owner = getResources().getStringArray(R.array.name_array)[pos];
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
