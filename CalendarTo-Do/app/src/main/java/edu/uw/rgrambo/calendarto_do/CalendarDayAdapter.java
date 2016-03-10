@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -110,6 +111,7 @@ public class CalendarDayAdapter extends BaseAdapter {
                     newFragment.show(ft, "dialog");
                 }
             });
+
             ((LinearLayout)convertView.findViewById(R.id.calendarDay)).addView(button);
         }
 
@@ -162,5 +164,4 @@ public class CalendarDayAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-
 }
