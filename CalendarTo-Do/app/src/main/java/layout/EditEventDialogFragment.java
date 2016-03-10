@@ -3,6 +3,7 @@ package layout;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
@@ -19,9 +20,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.gson.Gson;
+
 import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
@@ -30,7 +35,7 @@ import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 /**
  * Created by rossgrambo on 3/9/16.
  */
-public class EditEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
+public class EditEventDialogFragment extends DialogFragment {
 
     String Owner = "";
     View view;
@@ -51,13 +56,54 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
         final int eventId = bundle.getInt("id");
         final int offset = bundle.getInt("offset");
 
-        // Add the content to the spinner
-        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.name_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setAdapter(adapter);
+        Spinner eventSpinner = (Spinner) view.findViewById(R.id.eventSpinner);
+        final EditText eventFor = (EditText) view.findViewById(R.id.eventOwner);
+
+        eventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Owner = parent.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing for now :)
+            }
+        });
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        ArrayAdapter<CharSequence> adapter = null;
+        if (sharedPreferences.getBoolean("switch_enableTodoGroups", false)) {
+            eventSpinner.setVisibility(View.VISIBLE);
+            eventFor.setVisibility(View.GONE);
+            //todoFor.setEnabled(false);
+
+            // So we know temp isn't null so it's correctly retrieving stuff????
+            String storedPeopleString = sharedPreferences.getString("test", null);
+            if (storedPeopleString != null) {
+                Gson gson = new Gson();
+                ArrayList<String> values = gson.fromJson(storedPeopleString, ArrayList.class);
+                Iterator<String> itr = values.iterator();
+                while (itr.hasNext()) {
+                    String toRemove = itr.next();
+                    if (toRemove == null || toRemove.equals("")) {
+                        itr.remove();
+                    }
+                }
+                String[] container = new String[values.size()];
+                values.toArray(container);
+                adapter = new ArrayAdapter<CharSequence>(getContext(),android.R.layout.simple_spinner_item,
+                        container);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                eventSpinner.setAdapter(adapter);
+            }
+
+        } else {
+            eventSpinner.setVisibility(View.GONE);
+            eventFor.setVisibility(View.VISIBLE);
+            //todoFor.setEnabled(true);
+            Owner = "";
+        }
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -86,7 +132,10 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
             endTimePicker.setCurrentHour(event.getEndTime().getHourOfDay());
             endTimePicker.setCurrentMinute(event.getEndTime().getMinuteOfDay());
 
-            spinner.setSelection(adapter.getPosition(event.getOwner()));
+            if (adapter != null) {
+                Log.wtf("FUCK", adapter.getPosition(event.getOwner()) + "");
+                eventSpinner.setSelection(adapter.getPosition(event.getOwner()));
+            }
         } catch (Exception e) {
             Log.e("Error", e.toString());
         }
@@ -129,15 +178,6 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
 
         // Create the AlertDialog object and return it
         return builder.create();
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view,
-                               int pos, long id) {
-        Owner = getResources().getStringArray(R.array.name_array)[pos];
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
     }
 }
 

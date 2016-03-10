@@ -69,7 +69,7 @@ public class AddEventDialogFragment extends DialogFragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         if (sharedPreferences.getBoolean("switch_enableTodoGroups", false)) {
             eventSpinner.setVisibility(View.VISIBLE);
-            eventFor.setVisibility(View.INVISIBLE);
+            eventFor.setVisibility(View.GONE);
             //todoFor.setEnabled(false);
 
             // So we know temp isn't null so it's correctly retrieving stuff????
