@@ -19,7 +19,8 @@
             android:text="@string/leftArrow"
             android:textSize="20sp"
             android:background="@color/calendarTitleBackground"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#FFFFFF"/>
 
         <TextView
             android:id="@+id/monthTitle"
@@ -27,7 +28,8 @@
             android:layout_width="wrap_content"
             android:textSize="30sp"
             android:text="February"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textColor="#FFFFFF"/>
 
         <Button
             android:id="@+id/calendarRight"
@@ -36,7 +38,8 @@
             android:text="@string/rightArrow"
             android:textSize="20sp"
             android:background="@color/calendarTitleBackground"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#FFFFFF"/>
 
     </LinearLayout>
 

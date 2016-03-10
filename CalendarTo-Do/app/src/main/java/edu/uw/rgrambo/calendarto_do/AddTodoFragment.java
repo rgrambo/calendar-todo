@@ -49,6 +49,7 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
 
         final TextView todoTitle = (TextView) rootView.findViewById(R.id.todoTitle);
         final TextView todoFor = (TextView) rootView.findViewById(R.id.todoFor);
+        final TextView todoHeader = (TextView) rootView.findViewById(R.id.addTodoTitle);
         final Button recordTodo = (Button) rootView.findViewById(R.id.recordTodo);
         final Button updateTodo = (Button) rootView.findViewById(R.id.updateTodo);
         final Button deleteTodo = (Button) rootView.findViewById(R.id.deleteTodo);
@@ -62,6 +63,7 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
         } else {
             recordTodo.setVisibility(View.INVISIBLE);
             // Extras not null so we popular our text fields
+            todoHeader.setText("Editing a Todo");
             todoTitle.setText(extras.getString("title"));
             todoFor.setText(extras.getString("for"));
         }
