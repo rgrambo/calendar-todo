@@ -90,8 +90,6 @@ public class ToDoFragment extends Fragment {
 //                        break;
 //                    case MotionEvent.ACTION_UP:
 //                        if (event.getX() - prevs[0] < -50) {
-//
-//                            Log.wtf("BAHHH", "Delete it!!" + event.getX() + " : " + event.getY());
 //                        }
 //                        break;
 //                }
