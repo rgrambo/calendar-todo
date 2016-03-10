@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:key="category" android:title="Preferences" >
+        <SwitchPreference
+            android:key="switch_enableTodoGroups"
+            android:title="Use TODO Groups?"
+            android:summary="Only allow TODOs to be assigned to people in predefined groups"
+            />
+        <EditTextPreference
+            android:key="edittext_addToGroup"
+            android:title="Add a person to TODO Group"
+            android:dialogMessage="Enter the name of the person you want to add to your TODO group"
+            />
+        <MultiSelectListPreference
+            android:key="listpreference_todoGroup"
+            android:title="Todo Group"
+            android:summary="See your TODO Group"
+            android:entries="@array/TodoPeople"
+            android:entryValues="@array/TodoExtra"
+            android:defaultValue="@array/empty_array"
+            />
+        <EditTextPreference
+            android:key="test"
+            android:visibility="invisible" />
+    </PreferenceCategory>
+</PreferenceScreen>

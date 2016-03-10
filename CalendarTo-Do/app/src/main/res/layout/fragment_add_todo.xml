@@ -29,18 +29,25 @@
         android:layout_below="@id/todoTitle"
         android:hint="Who is this Todo for?"/>
 
+    <Spinner
+        android:id="@+id/todoForSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/todoTitle"
+        android:visibility="visible"/>
+
     <Button
         android:id="@+id/recordTodo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/todoFor"
+        android:layout_below="@id/todoForSpinner"
         android:text="Add Todo!"/>
 
     <Button
         android:id="@+id/updateTodo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/todoFor"
+        android:layout_below="@id/todoForSpinner"
         android:text="Update Todo!"/>
 
     <Button
@@ -48,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/updateTodo"
-        android:layout_below="@id/todoFor"
+        android:layout_below="@id/todoForSpinner"
         android:layout_marginLeft="10dp"
         android:text="Delete this todo"/>
 
