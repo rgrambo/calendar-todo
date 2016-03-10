@@ -2,19 +2,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="layout.ToDoFragment">
+    tools:context="layout.ToDoFragment"
+    android:padding="2dp"
+    android:background="@color/calendarTitleBackground">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:id="@+id/todoHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/calendarTitleBackground">
         <TextView
             android:id="@+id/fragmentTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:paddingTop="20dp"
+            android:paddingTop="5dp"
             android:textSize="30dp"
             android:layout_centerInParent="true"
             android:text="To-Do-List" />
@@ -31,10 +34,10 @@
     <ListView
         android:id="@+id/todoList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/todoHeader"
-        android:padding="30dp">
-
+        android:padding="30dp"
+        android:background="#FFFFFF">
     </ListView>
 
 </RelativeLayout>
