@@ -102,7 +102,6 @@ public class EditEventDialogFragment extends DialogFragment {
             eventSpinner.setVisibility(View.GONE);
             eventFor.setVisibility(View.VISIBLE);
             //todoFor.setEnabled(true);
-            Owner = "";
         }
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -133,8 +132,9 @@ public class EditEventDialogFragment extends DialogFragment {
             endTimePicker.setCurrentMinute(event.getEndTime().getMinuteOfDay());
 
             if (adapter != null) {
-                Log.wtf("FUCK", adapter.getPosition(event.getOwner()) + "");
                 eventSpinner.setSelection(adapter.getPosition(event.getOwner()));
+            } else {
+                ((EditText)view.findViewById(R.id.eventOwner)).setText(event.getOwner());
             }
         } catch (Exception e) {
             Log.e("Error", e.toString());
@@ -145,7 +145,12 @@ public class EditEventDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
                         String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
-                        String owner = Owner;
+                        String owner;
+                        if (Owner.equals("")) {
+                            owner = ((EditText)view.findViewById(R.id.eventOwner)).getText().toString();
+                        } else {
+                            owner = Owner;
+                        }
 
                         TimePicker startTimePicker = (TimePicker)view.findViewById(R.id.eventStartTime);
                         DateTime start = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
@@ -153,7 +158,7 @@ public class EditEventDialogFragment extends DialogFragment {
 
                         TimePicker endTimePicker = (TimePicker)view.findViewById(R.id.eventEndTime);
                         DateTime end = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
-                                startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
+                                endTimePicker.getCurrentHour(), endTimePicker.getCurrentMinute());
 
                         Event newEvent = new Event(title, note, owner, start, end);
                         TodoDatabase.updateCalendar(getContext(), newEvent, eventId);
