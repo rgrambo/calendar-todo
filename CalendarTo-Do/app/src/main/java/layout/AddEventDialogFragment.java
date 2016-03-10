@@ -2,7 +2,9 @@ package layout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -17,13 +19,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.gson.Gson;
+
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import edu.uw.rgrambo.calendarto_do.Event;
 import edu.uw.rgrambo.calendarto_do.R;
 import edu.uw.rgrambo.calendarto_do.TodoDatabase;
 
-public class AddEventDialogFragment extends DialogFragment implements AdapterView.OnItemSelectedListener {
+public class AddEventDialogFragment extends DialogFragment {
 
     String Owner = "";
     View view;
@@ -44,20 +51,65 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
         date = DateTime.parse(bundle.getString("date"));
         final int offset = bundle.getInt("offset");
 
-        // Add the content to the spinner
-        Spinner spinner = (Spinner) view.findViewById(R.id.eventSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
-                R.array.name_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setAdapter(adapter);
+        Spinner eventSpinner = (Spinner) view.findViewById(R.id.eventSpinner);
+        final EditText eventFor = (EditText) view.findViewById(R.id.eventOwner);
+
+        eventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Owner = parent.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing for now :)
+            }
+        });
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (sharedPreferences.getBoolean("switch_enableTodoGroups", false)) {
+            eventSpinner.setVisibility(View.VISIBLE);
+            eventFor.setVisibility(View.INVISIBLE);
+            //todoFor.setEnabled(false);
+
+            // So we know temp isn't null so it's correctly retrieving stuff????
+            String storedPeopleString = sharedPreferences.getString("test", null);
+            if (storedPeopleString != null) {
+                Gson gson = new Gson();
+                ArrayList<String> values = gson.fromJson(storedPeopleString, ArrayList.class);
+                Iterator<String> itr = values.iterator();
+                while (itr.hasNext()) {
+                    String toRemove = itr.next();
+                    if (toRemove == null || toRemove.equals("")) {
+                        itr.remove();
+                    }
+                }
+                String[] container = new String[values.size()];
+                values.toArray(container);
+                ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(getContext(),android.R.layout.simple_spinner_item,
+                        container);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                eventSpinner.setAdapter(adapter);
+            }
+
+        } else {
+            eventSpinner.setVisibility(View.GONE);
+            eventFor.setVisibility(View.VISIBLE);
+            //todoFor.setEnabled(true);
+            Owner = "";
+        }
 
         builder.setView(view)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         String title = ((EditText)view.findViewById(R.id.eventTitle)).getText().toString();
                         String note = ((EditText)view.findViewById(R.id.eventNote)).getText().toString();
-                        String owner = Owner;
+                        String owner;
+                        if (Owner.equalsIgnoreCase("")) {
+                            owner = Owner;
+                        } else {
+                            owner = eventFor.getText().toString();
+                        }
 
                         TimePicker startTimePicker = (TimePicker)view.findViewById(R.id.eventStartTime);
                         DateTime start = new DateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(),
@@ -71,7 +123,6 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
                         TodoDatabase.insertCalender(getContext(), newEvent);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
-                        Log.wtf("WTF", gridView + "");
                         CalendarFragment.populateGrid(gridView, (TextView) getActivity().findViewById((R.id.monthTitle)), getContext(), getActivity(), offset);
                     }
                 })
@@ -83,15 +134,6 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
 
         // Create the AlertDialog object and return it
         return builder.create();
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view,
-                               int pos, long id) {
-        Owner = getResources().getStringArray(R.array.name_array)[pos];
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
     }
 }
 
