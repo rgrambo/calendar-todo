@@ -51,7 +51,7 @@ public class CalendarFragment extends Fragment {
     private static DateTime[] dates;
     private TextView monthTitle;
 
-    private int mInterval = 50000; // 5 seconds by default, can be changed later
+    private int mInterval = 3600000; // Update every hour
     private Handler mHandler;
 
     private int monthOffset = 1;
