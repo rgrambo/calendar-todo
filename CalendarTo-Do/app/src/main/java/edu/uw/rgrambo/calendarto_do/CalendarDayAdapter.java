@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -76,7 +77,7 @@ public class CalendarDayAdapter extends BaseAdapter {
         TextView textView = (TextView) convertView
                 .findViewById(R.id.calendarDayNumber);
 
-        DateTime test = dates[position];
+        final DateTime test = dates[position];
         textView.setText(test.dayOfMonth().getAsText());
 
         List<Event> events = checkDayForEvents(position);
@@ -89,16 +90,6 @@ public class CalendarDayAdapter extends BaseAdapter {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    // Create the AlertDialog
-                    FragmentManager fm = ((FragmentActivity)context).getSupportFragmentManager();
-                    android.support.v4.app.FragmentTransaction ft = fm.beginTransaction();
-                    android.support.v4.app.Fragment prev = fm.findFragmentByTag("dialog");
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-
                     // Create and show the dialog.
                     android.support.v4.app.DialogFragment newFragment = new EditEventDialogFragment();
 
@@ -107,12 +98,35 @@ public class CalendarDayAdapter extends BaseAdapter {
                     args.putInt("offset", dates[18].getMonthOfYear() - new DateTime().getMonthOfYear() + 1);
                     newFragment.setArguments(args);
 
-                    newFragment.show(ft, "dialog");
+                    newFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "dialog");
                 }
             });
+
             ((LinearLayout)convertView.findViewById(R.id.calendarDay)).addView(button);
         }
 
+        // Add new event button
+        Button newButton = new Button(context);
+        newButton.setText("");
+        newButton.setBackground(null);
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create and show the dialog.
+                android.support.v4.app.DialogFragment newFragment = new AddEventDialogFragment();
+
+                Bundle args = new Bundle();
+                args.putString("date", test.toString());
+                args.putInt("offset", dates[18].getMonthOfYear() - new DateTime().getMonthOfYear() + 1);
+                newFragment.setArguments(args);
+
+                newFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "ADD_EVENT_FRAGMENT");
+            }
+        });
+
+        ((LinearLayout)convertView.findViewById(R.id.calendarDay)).addView(newButton);
+
+        newButton.getLayoutParams().height = 200;
 
         // Set BackgroundColor appropriately
         if (dates[position].getMonthOfYear() != DateTime.now().getMonthOfYear()) {
@@ -162,5 +176,4 @@ public class CalendarDayAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-
 }

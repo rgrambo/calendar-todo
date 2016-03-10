@@ -86,7 +86,6 @@ public class EditEventDialogFragment extends DialogFragment implements AdapterVi
             endTimePicker.setCurrentHour(event.getEndTime().getHourOfDay());
             endTimePicker.setCurrentMinute(event.getEndTime().getMinuteOfDay());
 
-            Log.e("TAG", event.getOwner() + ": HAHAHA");
             spinner.setSelection(adapter.getPosition(event.getOwner()));
         } catch (Exception e) {
             Log.e("Error", e.toString());

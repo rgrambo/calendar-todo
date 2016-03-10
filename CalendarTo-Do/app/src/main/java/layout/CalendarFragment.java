@@ -2,6 +2,7 @@ package layout;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.net.Uri;
@@ -49,6 +50,9 @@ public class CalendarFragment extends Fragment {
     private GridView gridView;
     private static DateTime[] dates;
     private TextView monthTitle;
+
+    private int mInterval = 3600000; // Update every hour
+    private Handler mHandler;
 
     private int monthOffset = 1;
 
@@ -101,31 +105,8 @@ public class CalendarFragment extends Fragment {
 
         populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DateTime date = dates[position];
-
-                // Create the AlertDialog
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment prev = fm.findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment newFragment = new AddEventDialogFragment();
-
-                Bundle args = new Bundle();
-                args.putString("date", date.toString());
-                args.putInt("offset", monthOffset);
-                newFragment.setArguments(args);
-
-                newFragment.show(ft, "dialog");
-            }
-        });
+        mHandler = new Handler();
+        startRepeatingTask();
 
         return view;
     }
@@ -179,6 +160,28 @@ public class CalendarFragment extends Fragment {
                 activity, dates, events);
 
         gridView.setAdapter(calendarDayAdapter);
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset); //this function can change value of mInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
+
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 
     public void onCalendarDayInteract(Date date) {
