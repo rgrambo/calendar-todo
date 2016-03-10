@@ -7,11 +7,20 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
+    <TextView
+        android:id="@+id/addTodoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add A Todo"
+        android:textAlignment="center"
+        android:textSize="30sp"/>
+
     <EditText
         android:id="@+id/todoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Todo Title"/>
+        android:hint="Todo Title"
+        android:layout_below="@id/addTodoTitle"/>
 
     <EditText
         android:id="@+id/todoFor"

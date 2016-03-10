@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="layout.ToDoFragment"
-    android:padding="2dp"
-    android:background="@color/calendarTitleBackground">
+    android:background="@drawable/paper">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:id="@+id/todoHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/calendarTitleBackground">
+        android:background="#FAF2AD">
         <TextView
             android:id="@+id/fragmentTitle"
             android:layout_width="wrap_content"
@@ -20,15 +19,17 @@
             android:paddingTop="5dp"
             android:textSize="30dp"
             android:layout_centerInParent="true"
-            android:text="To-Do-List" />
+            android:text="To-Do-List"
+            />
         <Button
             android:id="@+id/addTodo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/fragmentTitle"
             android:layout_alignParentRight="true"
+            android:textSize="20sp"
             android:text="+"
-            />
+            style="?android:attr/borderlessButtonStyle" />
     </RelativeLayout>
 
     <ListView
@@ -36,8 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/todoHeader"
-        android:padding="30dp"
-        android:background="#FFFFFF">
+        android:padding="30dp">
     </ListView>
 
 </RelativeLayout>
