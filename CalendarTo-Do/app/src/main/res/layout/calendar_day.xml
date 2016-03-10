@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/calendarDay"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="@color/calendarDayBackground">
-
-    <LinearLayout
-        android:id="@+id/calendarDay"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/calendarDayNumber"
@@ -21,5 +16,4 @@
             android:text="1"
             android:textSize="10sp" />
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

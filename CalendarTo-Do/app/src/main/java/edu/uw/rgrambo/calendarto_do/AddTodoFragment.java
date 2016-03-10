@@ -58,6 +58,74 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
             }
         });
 
+
+        final Bundle extras = getArguments();
+
+        if (extras == null) {
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String title = ((TextView) rootView.findViewById(R.id.todoTitle)).getText().toString();
+                    String tFor = ((TextView) rootView.findViewById(R.id.todoFor)).getText().toString();
+                    if (!todoForText.equals("")) {
+                        tFor = todoForText;
+                    }
+                    TodoItem todoItem = new TodoItem(title, tFor);
+                    TodoDatabase.insertTodo(getActivity(), todoItem);
+
+                    final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                    final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
+
+                    todoView.setAdapter(new SimpleCursorAdapter(
+                            getActivity(), R.layout.todo,
+                            TodoDatabase.queryDatabase(getActivity()),
+                            cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+                    ));
+
+                    Toast.makeText(getActivity(), "Added a new Todo!", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String title = ((TextView) rootView.findViewById(R.id.todoTitle)).getText().toString();
+                    String tFor = ((TextView) rootView.findViewById(R.id.todoFor)).getText().toString();
+                    if (!todoForText.equals("")) {
+                        tFor = todoForText;
+                    }
+                    TodoItem todoItem = new TodoItem(title, tFor);
+                    TodoDatabase.updateTodo(getActivity(), todoItem, extras.getInt("id"));
+
+                    final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                    final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
+
+                    todoView.setAdapter(new SimpleCursorAdapter(
+                            getActivity(), R.layout.todo,
+                            TodoDatabase.queryDatabase(getActivity()),
+                            cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+                    ));
+
+                    Toast.makeText(getActivity(), "Updated your todo!", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            builder.setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    TodoDatabase.deleteTodo(getActivity(), extras.getInt("id"));
+
+                    final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
+                    final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
+
+                    todoView.setAdapter(new SimpleCursorAdapter(
+                            getActivity(), R.layout.todo,
+                            TodoDatabase.queryDatabase(getActivity()),
+                            cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+                    ));
+
+                    Toast.makeText(getActivity(), "Deleted your todo!", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         todoForText = "";
 
         final AlertDialog addFragmentDialog = builder.create();
@@ -66,11 +134,6 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
         final TextView todoFor = (TextView) rootView.findViewById(R.id.todoFor);
         final TextView todoHeader = (TextView) rootView.findViewById(R.id.addTodoTitle);
         final Spinner todoSpinner = (Spinner) rootView.findViewById(R.id.todoForSpinner);
-        final Button recordTodo = (Button) rootView.findViewById(R.id.recordTodo);
-        final Button updateTodo = (Button) rootView.findViewById(R.id.updateTodo);
-        final Button deleteTodo = (Button) rootView.findViewById(R.id.deleteTodo);
-
-        final Bundle extras = getArguments();
 
         todoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -117,87 +180,13 @@ public class AddTodoFragment extends android.support.v4.app.DialogFragment {
             todoForText = "";
         }
 
-        if (extras == null) {
-            updateTodo.setVisibility(View.INVISIBLE);
-            deleteTodo.setVisibility(View.INVISIBLE);
-
-        } else {
-            recordTodo.setVisibility(View.INVISIBLE);
+        if (extras != null) {
             // Extras not null so we popular our text fields
             todoHeader.setText("Editing a Todo");
             todoTitle.setText(extras.getString("title"));
             todoFor.setText(extras.getString("for"));
         }
 
-        recordTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = todoTitle.getText().toString();
-                String tFor = todoFor.getText().toString();
-                if (!todoForText.equals("")) {
-                    tFor = todoForText;
-                }
-                TodoItem todoItem = new TodoItem(title, tFor);
-                TodoDatabase.insertTodo(getActivity(), todoItem);
-                addFragmentDialog.dismiss();
-
-                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
-                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
-
-                todoView.setAdapter(new SimpleCursorAdapter(
-                        getActivity(), R.layout.todo,
-                        TodoDatabase.queryDatabase(getActivity()),
-                        cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-                ));
-
-                Toast.makeText(getActivity(), "Added a new Todo!", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        updateTodo.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                String title = todoTitle.getText().toString();
-                String tFor = todoFor.getText().toString();
-                if (!todoForText.equals("")) {
-                    tFor = todoForText;
-                }
-                TodoItem todoItem = new TodoItem(title, tFor);
-                TodoDatabase.updateTodo(getActivity(), todoItem, extras.getInt("id"));
-                addFragmentDialog.dismiss();
-
-                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
-                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
-
-                todoView.setAdapter(new SimpleCursorAdapter(
-                        getActivity(), R.layout.todo,
-                        TodoDatabase.queryDatabase(getActivity()),
-                        cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-                ));
-
-                Toast.makeText(getActivity(), "Updated your todo!", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        deleteTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TodoDatabase.deleteTodo(getActivity(), extras.getInt("id"));
-                addFragmentDialog.dismiss();
-
-                final String[] cols = new String[]{TodoDatabase.TodoDB.COL_TITLE, TodoDatabase.TodoDB.COL_TODOFOR};
-                final int[] ids = new int[]{R.id.todoItem, R.id.todoFor};
-
-                todoView.setAdapter(new SimpleCursorAdapter(
-                        getActivity(), R.layout.todo,
-                        TodoDatabase.queryDatabase(getActivity()),
-                        cols, ids, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-                ));
-
-                Toast.makeText(getActivity(), "Deleted your todo!", Toast.LENGTH_LONG).show();
-            }
-        });
         // Create the AlertDialog object and return it
         return addFragmentDialog;
     }

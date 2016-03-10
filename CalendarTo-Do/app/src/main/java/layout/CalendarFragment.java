@@ -105,32 +105,6 @@ public class CalendarFragment extends Fragment {
 
         populateGrid(gridView, monthTitle, getContext(), getActivity(), monthOffset);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DateTime date = dates[position];
-
-                // Create the AlertDialog
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment prev = fm.findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-
-                // Create and show the dialog.
-                DialogFragment newFragment = new AddEventDialogFragment();
-
-                Bundle args = new Bundle();
-                args.putString("date", date.toString());
-                args.putInt("offset", monthOffset);
-                newFragment.setArguments(args);
-
-                newFragment.show(ft, "dialog");
-            }
-        });
-
         mHandler = new Handler();
         startRepeatingTask();
 

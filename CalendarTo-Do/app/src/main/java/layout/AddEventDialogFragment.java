@@ -71,7 +71,6 @@ public class AddEventDialogFragment extends DialogFragment implements AdapterVie
                         TodoDatabase.insertCalender(getContext(), newEvent);
 
                         GridView gridView = (GridView) getActivity().findViewById(R.id.gridview);
-                        Log.wtf("WTF", gridView + "");
                         CalendarFragment.populateGrid(gridView, (TextView) getActivity().findViewById((R.id.monthTitle)), getContext(), getActivity(), offset);
                     }
                 })
